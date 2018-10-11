@@ -1,6 +1,9 @@
 #include <stdio.h>
+void master(void) {
+	printf("master\n");
+}
 void printname(void) {
-	printf("nawhes");
+	printf("nawhes\n");
 }
 
 int main(void) {
