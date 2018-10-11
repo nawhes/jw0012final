@@ -1,6 +1,9 @@
 #include <stdio.h>
+void printname(void) {
+	printf("nawhes");
+}
 
 int main(void) {
-	printf("hello github!!!!!");
+	printname();
 	return 0;
 }
