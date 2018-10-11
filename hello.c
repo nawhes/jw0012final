@@ -1,6 +1,10 @@
 #include <stdio.h>
+void second(void) {
+	printf("second\n");
+}
+
 void printname(void) {
-	printf("nawhes");
+	printf("nawhes\n");
 }
 
 int main(void) {
