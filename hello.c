@@ -1,9 +1,9 @@
 #include <stdio.h>
 void master(void) {
-	printf("master\n");
+	printf("master!!\n");
 }
 void printname(void) {
-	printf("nawhes\n");
+	printf("nawhes!!\n");
 }
 
 int main(void) {
