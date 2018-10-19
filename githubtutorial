@@ -1,0 +1,50 @@
+*** git version 2.7.4
+*** author : nawhes
+
+** git install
+sudo apt-get install git-core
+
+** set configuration
+git config --global user.name "name"
+git config --global user.email "email"
+git config --global color.ui "auto"
+git config --list
+
+** initial
+git init
+
+** clone
+git clone https://github.com/nawhes/"repositoryname"
+
+** add & remove & commit etc..
+git add *
+git add "filename"
+git rm "filename"
+git status
+git commit -m "commit message"
+
+** git push
+git push "remote repositoryname" "branch name"
+git push origin master
+
+** remote
+git remote add "name" https://github.com/nawhes/"repositoryname"
+
+** fetch & pull & diff
+git fetch "remote repository" "refspec"
+git pull "remote repository" "refspec"
+
+
+** branch & checkout
+git checkout -b "new branch name"
+git checkout "branch name"
+git branch -d "delete branch name"
+git branch -r //list of remote branch
+git branch -a //list of every branch
+git checkout -b "new branch name" "remote branch name"
+git checkout -t "remote branch name"
+
+** expansion & reference
+https://backlog.com/git-tutorial/kr/reference/
+https://blog.outsider.ne.kr/641
+https://rogerdudler.github.io/git-guide/index.ko.html
