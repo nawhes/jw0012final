@@ -1,1 +1,27 @@
-*** aasdf
+*** linux common command , tmux , vi editor etc.
+
+*** tmux
+** install
+sudo apt-get install tmux
+
+** tmux prefix ctrl + b
+c - create new window
+d - detach this window
+l - lately window
+n - next window
+p - previous window
+w - check window number
+window number - move to number
+& - window close
+, - rename
+
+% - divide vertically
+" - divide horizontally
+q - check pane number
+o - next pane
+{ , } - control pane locate
+direction key - change focus pane
+alt + direction key - control pane size
+space bar - pane layout
+
+
