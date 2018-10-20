@@ -1,8 +1,20 @@
 *** linux common command , tmux , vi editor etc.
 
+*** linux command
+cd, ls(-al), cp, mv, mkdir, rm(-rf), grep, ps, kill
+
+*** vi editor
+http://gyuha.tistory.com/157
+
 *** tmux
 ** install
 sudo apt-get install tmux
+
+** create , attach , list
+tmux new -s "session name"
+tmux attach -t "session number or session name"
+tmux ls
+
 
 ** tmux prefix ctrl + b
 c - create new window
@@ -12,16 +24,26 @@ n - next window
 p - previous window
 w - check window number
 window number - move to number
-& - window close
-, - rename
+& - window close ( or ctrl + d )
+, - rename windows name
+
 
 % - divide vertically
 " - divide horizontally
+$ - session rename
 q - check pane number
 o - next pane
 { , } - control pane locate
-direction key - change focus pane
-alt + direction key - control pane size
+arrow key - change focus pane
+alt + arrow key - control pane size
 space bar - pane layout
+x - delete pane ( or ctrl + d )
 
-
+** tmux copy & paste
+ctrl + b , [ - scroll mode
+spacebar - block mode
+enter - copy
+ctrl + b , ] - paste
+http://jupiny.tistory.com/entry/tmux-%EC%B0%BD%EA%B3%BC-%EC%B0%BD-%EC%82%AC%EC%9D%B4%EC%97%90%EC%84%9C-%EB%B3%B5%EB%B6%99%ED%95%98%EA%B8%B0
+https://edykim.com/ko/post/tmux-introductory-series-summary/#fn-2124-2
+https://blog.outsider.ne.kr/699
