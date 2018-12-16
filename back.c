@@ -1,8 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/shm.h>
-#include <unistd.h>
-#include <string.h>
 #include "TSTree.h"
 #include "nawhes.h"
 #include <signal.h>
@@ -15,6 +10,10 @@ void *thread_print(void *buffer);
 void sigInt(int signo);
 
 int main(void){
+	char buffer[MAX];
+	char *result;
+
+	//sigaction
 	struct sigaction intsig;
 	intsig.sa_handler = sigInt;
 	intsig.sa_flags = 0;
@@ -23,28 +22,28 @@ int main(void){
 		return -1;
 	}
 
-	char buffer[MAX];
-	pthread_t threads[2];
+	//semaphore
+	sem_t *sem;
+	if((sem = sem_open(SEMA, O_CREAT, 0666, 1)) == NULL){
+		perror("failed sem_open\n");
+		return -1;
+	}
 
-	int rc;
-	int status;
+	//pthread
+	pthread_t threads[2];//threads[0] is for thread_print, threads[1] is for thread_push
 	
-	char *result;
-
+	//shared memory
 	int shm_id;
 	search *shm_addr;
-	sem_t *sem;
-	sem = sem_open(SEMA, O_CREAT, 0666, 0);
-
 	if(-1 == (shm_id = shmget((key_t)KEY_NUM, sizeof(search), IPC_CREAT|0666))){
 		perror("failed shmget");
 		return -1;
 	}
-	
 	if((void *)-1 == (shm_addr = (search *)shmat(shm_id, NULL, 0))){
 		perror("failed shmat");
 		return -1;
 	}
+
 	while(1){
 		sem_wait(sem);
 	//	system("clear");

@@ -119,37 +119,3 @@ char* auto_complete(TSTree* root, char* buffer, int cursor){
 	}
 	return buffer;
 }
-		
-/*
-int main(){
-	TSTree *root = NULL;
-	TSTree *found = NULL;
-	char test[MAX] = "catst";//received string
-	char buffer[MAX];
-	char* last;
-	int abc;
-
-	insert(&root, "cat");
-	insert(&root, "cats");
-	insert(&root, "caat");
-	insert(&root, "catsstick");
-	insert(&root, "catsjoy");
-	insert(&root, "catstory");
-	insert(&root, "catstire");
-	insert(&root, "up");
-	insert(&root, "bug");
-//	insert(&root, "bb");
-//	insert(&root, "but");
-
-	printf("Following is traversal of ternary search tree\n");
-	found = traverseTSTree(root, test);
-	printTSTree(found, buffer, 0);
-	if(checkLastOne(found)){
-		last = auto_complete(found, buffer, 0);
-		strcat(test, last);
-		printf("%s\n",test);//sharedmemory asdfg = test
-	}
-	return 0;
-}
-*/	
-
