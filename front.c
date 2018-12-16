@@ -29,11 +29,15 @@ int main(void){
 		while(getchar() != '\n');
 		shm_addr->keyword[shm_addr->cursor + 1] = '\0';
 		shm_addr->keyword[shm_addr->cursor] = ch;
-		i = shm_addr->cursor;
-		if (ch == '`'){
+		if(ch != '`' && ch != '\n'){
+			i = shm_addr->cursor++;
+		}
+		else if(ch == '`'){ //toggle to auto_complete on
+			shm_addr->keyword[shm_addr->cursor] = '\0';
 			shm_addr->call[0] = 1;
 		}
-		if (ch == '\n'){
+		else{ //toggle to push on
+			shm_addr->keyword[shm_addr->cursor] = '\0';
 			shm_addr->call[1] = 1;
 		}
 		sem_post(sem);
