@@ -10,16 +10,18 @@
 
 #define KEY_NUM 7654
 #define MAX 64
+#define SEMA "7654"
 
 typedef struct search{
-	int call;
+	int call[2];
 	int cursor;
 	char keyword[MAX];
 }search;
 
 void init_search(search* search){
-	search->call = 0;
-	search->cursor = -1;
+	search->call[0] = 0;
+	search->call[1] = 0;
+	search->cursor = 0;
  	*search->keyword = '\0';
 }
 

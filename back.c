@@ -5,15 +5,26 @@
 #include <string.h>
 #include "TSTree.h"
 #include "nawhes.h"
+#include <signal.h>
 
 TSTree *root = NULL;
+TSTree *found;
 
-void *thread_push(void *word);
+void *thread_push(void *buffer);
+void *thread_print(void *buffer);
+void sigInt(int signo);
 
 int main(void){
-	int ho;
+	struct sigaction intsig;
+	intsig.sa_handler = sigInt;
+	intsig.sa_flags = 0;
+	if(-1 == sigaction(SIGINT, &intsig, 0)){
+		perror("failed sigaction\n");
+		return -1;
+	}
+
 	char buffer[MAX];
-	pthread_t threads;
+	pthread_t threads[2];
 
 	int rc;
 	int status;
@@ -23,47 +34,47 @@ int main(void){
 	int shm_id;
 	search *shm_addr;
 	sem_t *sem;
-	sem = sem_open("sem", O_CREAT, 0666, 0);
+	sem = sem_open(SEMA, O_CREAT, 0666, 0);
 
-	TSTree *found=NULL;
-	
 	if(-1 == (shm_id = shmget((key_t)KEY_NUM, sizeof(search), IPC_CREAT|0666))){
-		printf("failed get");
+		perror("failed shmget");
 		return -1;
 	}
 	
 	if((void *)-1 == (shm_addr = (search *)shmat(shm_id, NULL, 0))){
-		printf("failed attach");
+		perror("failed shmat");
 		return -1;
 	}
-	found = root;
 	while(1){
 		sem_wait(sem);
-		system("clear");
-		if(shm_addr->call){
-			if(checkLastOne(found)){
-				result = auto_complete(found, buffer, 0);
-				printf("result : %s\n",result);
-				sleep(1);
-				strcat(shm_addr->keyword, result);
-				shm_addr->cursor = shm_addr->cursor + strlen(result) - 1;
-			//	shm_addr->keyword[shm_addr->cursor] = '\0';
+	//	system("clear");
+		if(shm_addr->keyword[shm_addr->cursor] != '\0'){
+			if((shm_addr->call[0] != 1) && (shm_addr->call[1] != 1)){
+				found = traverseTSTree(found, shm_addr->keyword + shm_addr->cursor);
+				printf("keyword : %s\n", shm_addr->keyword);
+				pthread_create(&threads[0], NULL, thread_print, (void *)buffer);
+				shm_addr->cursor = shm_addr->cursor + 1;
 			}
-			shm_addr->call = 0;
-			found = traverseTSTree(root, shm_addr->keyword);
-		}
-		else {
-			found = traverseTSTree(found, shm_addr->keyword + shm_addr->cursor);
-			printf("keyword : %s\n", shm_addr->keyword);
-			printTSTree(found, buffer, 0);
-			if(0 == strncmp(shm_addr->keyword + shm_addr->cursor,"9",1)){
-				printf("pushed\n");
+			else if(shm_addr->call[0]){
+				shm_addr->keyword[shm_addr->cursor] = '\0';
+				if(checkLastOne(found)){
+					result = auto_complete(found, buffer, 0);
+					printf("result : %s, %d\n",result, (int)strlen(result));
+					strcat(shm_addr->keyword, result);
+					shm_addr->cursor = shm_addr->cursor + strlen(result);
+					found = traverseTSTree(found, result);
+				}
+				shm_addr->call[0] = 0;
+			}
+			else if(shm_addr->call[1]){
+				shm_addr->keyword[shm_addr->cursor] = '\0';
 				strcpy(buffer,shm_addr->keyword);
-				pthread_create(&threads, NULL, thread_push, (void *)buffer);
-				usleep(200);
+				pthread_create(&threads[1], NULL, thread_push, (void *)buffer);
 				init_search(shm_addr);
 				found = root;
+				usleep(200);
 			}
+		//	printf("keyword: %s\n",shm_addr->keyword);
 		}
 		sem_post(sem);
 		usleep(200);
@@ -71,8 +82,25 @@ int main(void){
 	return 0;
 }
 
-void *thread_push(void *word){
-	insert(&root, (char *)word);
+void *thread_push(void *buffer){
+	insert(&root, (char *)buffer);
 	printf("complete push\n");
 	pthread_exit((void *) 0);
-}	
+}
+
+void *thread_print(void *buffer){
+	printTSTree(found, (char *)buffer, 0);
+	pthread_exit((void *) 0);
+}
+
+void sigInt(int signo){
+	sigset_t sigset, oldset;
+	sigfillset(&sigset);
+	if(sigprocmask(SIG_BLOCK, &sigset, &oldset) < 0){
+		printf("sigprocmask error\n");
+	}
+	freeTSTree(root);
+	printf("root is free\n");
+	exit(1);
+}
+

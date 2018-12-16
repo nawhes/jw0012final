@@ -5,7 +5,7 @@
 
 typedef struct TSTree {
 	char data;
-	unsigned isEndOfString: 1;
+	unsigned int isEndOfString;
 	struct TSTree *left, *eq, *right;
 }TSTree;
 
@@ -29,8 +29,8 @@ void insert(TSTree** root, char *word){
 	else if((*word) > (*root)->data) //more
 		insert(&( (*root)->right ), word);
 
-	else{
-		if (*(word+1)) //equal
+	else{ //equal
+		if (*(word+1))
 			insert(&( (*root)->eq), word+1);
 
 		else
@@ -61,6 +61,15 @@ TSTree* traverseTSTree(TSTree* root, char *word){
 	}
 }
 
+void freeTSTree(TSTree* root){
+	if(root){
+		freeTSTree(root->left);
+		freeTSTree(root->right);
+		freeTSTree(root->eq);
+		free(root);
+	}
+}
+
 void printTSTree(TSTree* root, char* buffer, int cursor){
 	if(root){
 		printTSTree(root->left, buffer, cursor);
@@ -76,21 +85,30 @@ void printTSTree(TSTree* root, char* buffer, int cursor){
 	}
 }
 
-int checkLastOne(TSTree* root){
+int checkLastOneUtil(TSTree* root, int i){
 	if(root){
-		if(checkLastOne(root->eq)){
-			if(root->left == NULL && root->right == NULL){
-				return 1;
+		if((root->left == NULL) && (root->right == NULL)){
+			if(root->isEndOfString){
+				i++;
 			}
-			else{
-				return 0;
-			}
+			return i + checkLastOneUtil(root->eq, i);
 		}
 		return 0;
 	}
-	return 1;
+	return 0;
 }
 
+int checkLastOne(TSTree* root){
+	int i=0;
+	i = checkLastOneUtil(root, 0);
+	if(i == 1){
+		return 1;
+	}
+	else{
+		return 0;
+	}
+}
+	
 char* auto_complete(TSTree* root, char* buffer, int cursor){
 	if(root){
 		buffer[cursor] = root->data;
